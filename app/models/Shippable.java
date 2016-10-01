@@ -4,7 +4,6 @@ import com.avaje.ebean.Model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 
 /**
  * Created by raj on 30/9/16.
@@ -13,39 +12,35 @@ import javax.persistence.JoinColumn;
 public class Shippable extends Model {
 
   @Id
-  public int id;
-  public String state;
-  @JoinColumn(name = "created_at")
-  public String createdAt;
-  @JoinColumn(name = "updated_at")
-  public String updatedAt;
-  @JoinColumn(name = "closed_at")
-  public String closedAt;
+  private int id;
+  private String state;
+  private String created_at;
+  private String updated_at;
+  private String closed_at;
+
   public String getState() { return state; }
 
   public void setState(String state) { this.state = state; }
 
-  public String getCreatedAt() { return createdAt; }
+  public String getCreated_at() { return created_at; }
 
-  public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
+  public void setCreated_at(String created_at) { this.created_at = created_at; }
 
-  public String getUpdatedAt() { return updatedAt; }
+  public String getUpdated_at() { return updated_at; }
 
-  public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
+  public void setUpdated_at(String updated_at) { this.updated_at = updated_at; }
 
-  public String getClosedAt() { return closedAt; }
+  public String getClosed_at() { return closed_at; }
 
-  public void setClosedAt(String closedAt) { this.closedAt = closedAt; }
-
-  public static Finder<Long, Shippable> find = new Finder<>(Long.class, Shippable.class);
+  public void setClosed_at(String closed_at) { this.closed_at = closed_at; }
 
   @Override
   public String toString() {
     return "Shippable{" +
-        "closedAt='" + closedAt + '\'' +
-        ", updatedAt='" + updatedAt + '\'' +
-        ", createdAt='" + createdAt + '\'' +
-        ", state='" + state + '\'' +
+        "state='" + state + '\'' +
+        ", created_at='" + created_at + '\'' +
+        ", updated_at='" + updated_at + '\'' +
+        ", closed_at='" + closed_at + '\'' +
         '}';
   }
 }
