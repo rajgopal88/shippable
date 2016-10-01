@@ -1,0 +1,44 @@
+<!Doctype html>
+<html ng-app = "ShippableApp">
+	<head>
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+		<TITLE>Shippable Screening Test</TITLE>
+	</head>
+	<body>
+		<div class="container" ng-controller="ShippableAppCtrl">
+			<h1>Github Open Issue Details</h1>
+			<div class="col-sm-6">
+      			<input type="text" class="form-control" placeholder="https://github.com/Shippable/support/issues" ng-model="link">
+    		</div><button class="btn btn-primary" ng-click = getData()>Click for issue details</button>
+    		<div>
+    			&nbsp;
+    		</div>
+    		<div class="col-sm-12">	
+    			<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>Total Open Issues</th>
+							<th>Less than 24 hours</th>
+							<th>Greater than 24 hours but less than 7 days ago</th>
+							<th>Greater than 7 days ago</th>
+						</tr>
+					</thead>
+					@*<tbody>
+						<tr ng-repeat="">
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tbody>*@
+				</table>
+			</div>
+		</div>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+    <script src="assets/javascripts/shippable.js"></script>
+	</body>
+</html>
