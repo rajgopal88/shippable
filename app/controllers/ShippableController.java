@@ -70,8 +70,8 @@ public class ShippableController extends Controller {
     int gt24lt7d = 0;
     int gt7d = 0;
     for(Shippable s:sh) {
-      String createdDate = s.getCreated_at();
-      String updatedDate = s.getUpdated_at();
+      String createdDate = s.getCreatedAt();
+      String updatedDate = s.getUpdatedAt();
 
       DateTime isoDate = new DateTime(createdDate, DateTimeZone.UTC);
       DateTimeFormatter dateTimeFormatter = DateTimeFormat

@@ -27,14 +27,12 @@
 							<th>Greater than 7 days ago</th>
 						</tr>
 					</thead>
-					@*<tbody>
-						<tr ng-repeat="">
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-						</tr>
-					</tbody>*@
+					<tbody>
+            <td>{{issueData.totalIssue}}</td>
+						<td>{{issueData.lessThan24Hours}}</td>
+						<td>{{issueData.greaterThan24HoursLessThan7Days}}</td>
+						<td>{{issueData.greaterThan7Days}}</td>
+          </tbody>
 				</table>
 			</div>
 		</div>
