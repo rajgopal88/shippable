@@ -1,12 +1,12 @@
-var ShippableApp = angular.module('ShippableApp',[]);
-ShippableApp.controller('ShippableAppCtrl',function($scope, shippableFactory) {
+var IssueApp = angular.module('IssueApp',[]);
+IssueApp.controller('IssueAppCtrl',function($scope, issueFactory) {
 
     $scope.link = "https://github.com/Shippable/support/issues";
     $scope.issueData;
     $scope.getData = function() {
         var data = {};
         data["link"] = $scope.link;
-        shippableFactory.getData(data).success(function(response) {
+        issueFactory.getData(data).success(function(response) {
             console.log(response);
             $scope.issueData = response;
         });
@@ -14,8 +14,8 @@ ShippableApp.controller('ShippableAppCtrl',function($scope, shippableFactory) {
 
     $scope.getData();
 });
-ShippableApp.factory('shippableFactory', ['$http', function($http) {
-    var shippableFactory = {};
+IssueApp.factory('issueFactory', ['$http', function($http) {
+    var issueFactory = {};
 
     var config = {
         headers : {
@@ -23,9 +23,9 @@ ShippableApp.factory('shippableFactory', ['$http', function($http) {
         }
     };
 
-    shippableFactory.getData = function(data) {
+    issueFactory.getData = function(data) {
         return $http.post('/link', data, config);
     };
 
-    return shippableFactory;
+    return issueFactory;
 }]);
