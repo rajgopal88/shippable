@@ -44,7 +44,7 @@ public class IssueController extends Controller {
     String path = url.getPath();
     int page = 1, noOfIssue = 100;
       String finalLink = "https://api.github.com/repos";
-      String pageLink = "?page="+ page+"&per_page="+noOfIssue;
+      String pageLink = "?page="+ page+"&per_page="+noOfIssue+"&state=open";
       finalLink=finalLink.concat(path);
       finalLink=finalLink.concat(pageLink);
       List<Issue> issueList = null;
