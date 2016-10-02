@@ -1,11 +1,10 @@
 package models;
 
 import com.avaje.ebean.Model;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 
 /**
  * Model file for getting the essential part from the json returned from the
@@ -18,21 +17,25 @@ public class Issue extends Model {
 
   private String state;
 
-  private String created_at;
+  @JsonProperty("created_at")
+  private String createdAt;
 
-  @OneToOne
-  @JoinColumn(name = "pull_request")
-  private PullRequest pull_request;
+  @JsonProperty("pull_request")
+  private PullRequest pullRequest;
+
+  public int getId() { return id; }
+
+  public void setId(int id) { this.id = id; }
 
   public String getState() { return state; }
 
   public void setState(String state) { this.state = state; }
 
-  public String getCreated_at() { return created_at; }
+  public String getCreatedAt() { return createdAt; }
 
-  public void setCreated_at(String created_at) { this.created_at = created_at;}
+  public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
 
-  public PullRequest getPull_request() { return pull_request; }
+  public PullRequest getPullRequest() { return pullRequest; }
 
-  public void setPull_request(PullRequest pull_request) { this.pull_request = pull_request; }
+  public void setPullRequest(PullRequest pullRequest) { this.pullRequest = pullRequest; }
 }

@@ -1,9 +1,9 @@
 package models;
 
 import com.avaje.ebean.Model;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
 
 /**
  * Created by raj on 2/10/16.
@@ -11,10 +11,30 @@ import javax.persistence.Id;
 @Entity
 public class PullRequest extends Model {
 
-  @Id
-  private int id;
   private String url;
-  private String html_url;
-  private String diff_url;
-  private String patch_url;
+
+  @JsonProperty("html_url")
+  private String htmlUrl;
+
+  @JsonProperty("diff_url")
+  private String diffUrl;
+
+  @JsonProperty("patch_url")
+  private String patchUrl;
+
+  public String getUrl() { return url; }
+
+  public void setUrl(String url) { this.url = url; }
+
+  public String getHtmlUrl() { return htmlUrl; }
+
+  public void setHtmlUrl(String htmlUrl) { this.htmlUrl = htmlUrl; }
+
+  public String getDiffUrl() { return diffUrl; }
+
+  public void setDiffUrl(String diffUrl) { this.diffUrl = diffUrl; }
+
+  public String getPatchUrl() { return patchUrl; }
+
+  public void setPatchUrl(String patchUrl) { this.patchUrl = patchUrl; }
 }
