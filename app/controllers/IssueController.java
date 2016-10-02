@@ -34,7 +34,10 @@ public class IssueController extends Controller {
   @Inject
   WSClient ws;
 
-  //function to render the UI
+  /**
+   * function to render the UI
+   * @return
+   */
   public Result issueUI() { return ok(master.render()); }
 
   /**
@@ -64,27 +67,17 @@ public class IssueController extends Controller {
     //calling the function which processes the api link and sends the issue details
     return getIssues(1, 100, path).thenApply(issues -> ok(Json.toJson(issueDetails(issues))));
   }
-    /*return ws.url(finalLink).get()
-        .thenApply(WSResponse::getBody)
-        .thenApply(wsr -> {
-          try {
-            List<Issue> issue = Json.mapper().readValue(wsr,
-                Json.mapper().getTypeFactory().constructCollectionType(List.class, Issue.class));
-            return ok(Json.toJson(issueDetails(issue)));
-          } catch (IOException e) {
-            e.printStackTrace();
-            }
-            return ok("ok");
-          });
-  }*/
 
   private CompletionStage<List<Issue>> getIssues(int page, int noIssues, String path) {
 
-    //getting the github api link again for recursive call
+    /**
+     * getting the github api link again for recursive call
+     */
     String finalLink = IssueUtils.getApi(page, noIssues, path);
-    //System.out.println(finalLink);
 
-    //Asynchronous call which call teh webservice and gets all the issue details
+    /**
+     * Asynchronous call which call teh webservice and gets all the issue details
+     */
     CompletionStage<List<Issue>> issuesCompletionStage = ws.url(finalLink).get()
         .thenApply(WSResponse::getBody)
         .thenApply(wsr -> {
@@ -125,18 +118,16 @@ public class IssueController extends Controller {
    * function which receives list of processed issue and processes this
    * data to get the issue details and returns a map containing all the details.
    */
-  public Map<String,Integer> issueDetails(List<Issue> sh) {
+  public Map<String,Integer> issueDetails(List<Issue> issues) {
     int totalIssue = 0;
     int lt24h = 0;
     int gt24lt7d = 0;
     int gt7d = 0;
-    for(Issue s:sh) {
-      /**
-       *filtering the pull request as the github api returns both the issue and pull request as issues
-       */
-      if(s.getPullRequest() == null) {
+    for(Issue issue:issues) {
+      //filtering the pull request as the github api returns both the issue and pull request as issues
+      if(issue.getPullRequest() == null) {
         totalIssue++;
-        String createdDate = s.getCreatedAt();
+        String createdDate = issue.getCreatedAt();
 
         DateTime now = DateTime.now();
 
@@ -158,9 +149,9 @@ public class IssueController extends Controller {
         try {
           d1 = format.parse(newCreatedDate);
           d2 = format.parse(newUpdatedDate);
+
           //in milliseconds
           long diff = d2.getTime() - d1.getTime();
-          //long diffHours = diff / (60 * 60 * 1000) % 24;
           long diffDays = diff / (24 * 60 * 60 * 1000);
 
           if(diffDays == 0) {

@@ -1,6 +1,5 @@
 package models;
 
-import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
@@ -9,7 +8,7 @@ import javax.persistence.Entity;
  * Created by raj on 2/10/16.
  */
 @Entity
-public class PullRequest extends Model {
+public class PullRequest {
 
   private String url;
 

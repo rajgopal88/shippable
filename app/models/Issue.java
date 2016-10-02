@@ -1,6 +1,5 @@
 package models;
 
-import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
@@ -10,7 +9,7 @@ import javax.persistence.Id;
  * Model file for getting the essential part from the json returned from the
  */
 @Entity
-public class Issue extends Model {
+public class Issue {
 
   @Id
   private int id;
