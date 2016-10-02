@@ -12,6 +12,7 @@ import play.libs.ws.WSResponse;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import utils.IssueUtils;
 import views.html.html.master;
 
 import javax.inject.Inject;
@@ -28,41 +29,74 @@ import java.util.concurrent.CompletionStage;
  */
 public class IssueController extends Controller {
 
-  //String final_link = "https://api.github.com/repos/Shippable/support/issues?page=1&per_page=100";
+  String final_link = "https://api.github.com/repos/Shippable/support/issues?page=1&per_page=100&state=open";
+
   @Inject
   WSClient ws;
 
-  /**
-   * function to render the UI
-   * @return
-   */
+  //function to render the UI
   public Result issueUI() { return ok(master.render()); }
 
-
+  /**
+   *
+   * @return
+   * @throws MalformedURLException
+   */
   public CompletionStage<Result> issueLink() throws MalformedURLException {
     Http.RequestBody body = request().body();
     JsonNode json = body.asJson();
     String link = json.findPath("link").asText();
     URL url = new URL(link);
     String path = url.getPath();
-    int page = 1, noOfIssue = 100;
-      String finalLink = "https://api.github.com/repos";
-      String pageLink = "?page="+ page+"&per_page="+noOfIssue+"&state=open";
-      finalLink=finalLink.concat(path);
-      finalLink=finalLink.concat(pageLink);
-      List<Issue> issueList = null;
-      return ws.url(finalLink).get()
-          .thenApply(WSResponse::getBody)
-          .thenApply(wsr -> {
-            try {
-              List<Issue> issue = Json.mapper().readValue(wsr,
-                  Json.mapper().getTypeFactory().constructCollectionType(List.class, Issue.class));
-              return ok(Json.toJson(issueDetails(issue)));
-            } catch (IOException e) {
-              e.printStackTrace();
+
+    String finalLink = IssueUtils.getApi(1, 100, path);
+    List<Issue> issueList = null;
+
+    return getIssues(1, 100, path).thenApply(issues -> ok(Json.toJson(issueDetails(issues))));
+  }
+    /*return ws.url(finalLink).get()
+        .thenApply(WSResponse::getBody)
+        .thenApply(wsr -> {
+          try {
+            List<Issue> issue = Json.mapper().readValue(wsr,
+                Json.mapper().getTypeFactory().constructCollectionType(List.class, Issue.class));
+            return ok(Json.toJson(issueDetails(issue)));
+          } catch (IOException e) {
+            e.printStackTrace();
             }
             return ok("ok");
           });
+  }*/
+
+  private CompletionStage<List<Issue>> getIssues(int page, int noIssues, String path) {
+    String finalLink = IssueUtils.getApi(page, noIssues, path);
+    System.out.println(finalLink);
+    CompletionStage<List<Issue>> issuesCompletionStage = ws.url(finalLink).get()
+        .thenApply(WSResponse::getBody)
+        .thenApply(wsr -> {
+          try {
+            List<Issue> issues = Json.mapper().readValue(wsr,
+                Json.mapper().getTypeFactory().constructCollectionType(List.class, Issue.class));
+            return issues;
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+          return new ArrayList<Issue>();
+        });
+    CompletionStage<List<Issue>> uCompletionStage = issuesCompletionStage.thenComposeAsync(issues1 -> {
+      if (issues1.size() < noIssues) return issuesCompletionStage;
+      else {
+        CompletionStage<List<Issue>> wCompletionStage = getIssues(page + 1, noIssues, path)
+            .thenApply(issues2 -> {
+              issues1.addAll(issues2);
+              return issues1;
+            });
+        return wCompletionStage;
+      }
+
+    });
+
+    return uCompletionStage;
   }
 
   public Map<String,Integer> issueDetails(List<Issue> sh) {
@@ -72,7 +106,9 @@ public class IssueController extends Controller {
     int gt7d = 0;
     for(Issue s:sh) {
       String createdDate = s.getCreated_at();
-      String updatedDate = s.getUpdated_at();
+      //String updatedDate = s.getUpdated_at();
+
+      DateTime now = DateTime.now();
 
       DateTime isoDate = new DateTime(createdDate, DateTimeZone.UTC);
       DateTimeFormatter dateTimeFormatter = DateTimeFormat
@@ -80,7 +116,7 @@ public class IssueController extends Controller {
           .withZone(DateTimeZone.forID("Asia/Kolkata"));
       String newCreatedDate = dateTimeFormatter.print(isoDate);
 
-      DateTime isoDate1 = new DateTime(updatedDate, DateTimeZone.UTC);
+      DateTime isoDate1 = new DateTime(now, DateTimeZone.UTC);
       DateTimeFormatter dateTimeFormatter1 = DateTimeFormat
           .forPattern("MM/dd/yyyy HH:mm:ss")
           .withZone(DateTimeZone.forID("Asia/Kolkata"));
