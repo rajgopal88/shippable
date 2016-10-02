@@ -3,6 +3,10 @@ IssueApp.controller('IssueAppCtrl',function($scope, issueFactory) {
 
     $scope.link = "https://github.com/Shippable/support/issues";
     $scope.issueData;
+
+    /**
+     * function which sends the link address entered by the user and in response gets the details of the issue
+     */
     $scope.getData = function() {
         var data = {};
         data["link"] = $scope.link;
@@ -14,6 +18,7 @@ IssueApp.controller('IssueAppCtrl',function($scope, issueFactory) {
 
     $scope.getData();
 });
+
 IssueApp.factory('issueFactory', ['$http', function($http) {
     var issueFactory = {};
 
@@ -23,6 +28,9 @@ IssueApp.factory('issueFactory', ['$http', function($http) {
         }
     };
 
+    /**
+     * http request which call the api for getting the details
+     */
     issueFactory.getData = function(data) {
         return $http.post('/link', data, config);
     };

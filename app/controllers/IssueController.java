@@ -38,21 +38,31 @@ public class IssueController extends Controller {
   public Result issueUI() { return ok(master.render()); }
 
   /**
-   *
+   * api function which takes github repository link as input through POST
+   * and sends the issue details as output
    * @return
    * @throws MalformedURLException
    */
   public CompletionStage<Result> issueLink() throws MalformedURLException {
+
+    //POST Body
     Http.RequestBody body = request().body();
     JsonNode json = body.asJson();
     String link = json.findPath("link").asText();
+
+    //Parsing the user entered link
     URL url = new URL(link);
+
+    //getting the url path
     String path = url.getPath();
 
+    //getting the github api link
     String finalLink = IssueUtils.getApi(1, 100, path);
-    System.out.println(finalLink);
+
+    //System.out.println(finalLink);
     List<Issue> issueList = null;
 
+    //calling the function which processes the api link and sends the issue details
     return getIssues(1, 100, path).thenApply(issues -> ok(Json.toJson(issueDetails(issues))));
   }
     /*return ws.url(finalLink).get()
@@ -70,12 +80,18 @@ public class IssueController extends Controller {
   }*/
 
   private CompletionStage<List<Issue>> getIssues(int page, int noIssues, String path) {
+
+    //getting the github api link again for recursive call
     String finalLink = IssueUtils.getApi(page, noIssues, path);
-    System.out.println(finalLink);
+    //System.out.println(finalLink);
+
+    //Asynchronous call which call teh webservice and gets all the issue details
     CompletionStage<List<Issue>> issuesCompletionStage = ws.url(finalLink).get()
         .thenApply(WSResponse::getBody)
         .thenApply(wsr -> {
           try {
+
+            //converting all the issue in modal format excluding all other details
             List<Issue> issues = Json.mapper().readValue(wsr,
                 Json.mapper().getTypeFactory().constructCollectionType(List.class, Issue.class));
             return issues;
@@ -84,7 +100,13 @@ public class IssueController extends Controller {
           }
           return new ArrayList<Issue>();
         });
+
+    /**
+     * receursive call to this function because the api generated can read a
+     * maximum of 100 issue at a time so this is done to read all the other issues.
+     */
     CompletionStage<List<Issue>> uCompletionStage = issuesCompletionStage.thenComposeAsync(issues1 -> {
+
       if (issues1.size() < noIssues) return issuesCompletionStage;
       else {
         CompletionStage<List<Issue>> wCompletionStage = getIssues(page + 1, noIssues, path)
@@ -100,6 +122,10 @@ public class IssueController extends Controller {
     return uCompletionStage;
   }
 
+  /**
+   * function which receives list of processed issue and processes this
+   * data to get the issue details and returns a map containing all the details.
+   */
   public Map<String,Integer> issueDetails(List<Issue> sh) {
     int totalIssue = 0;
     int lt24h = 0;
