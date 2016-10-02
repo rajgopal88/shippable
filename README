@@ -15,4 +15,8 @@ This is Play Application so we need to install activator. Below are the steps to
          activator
          reload
          run
-Now clone the project and go to the project path and run the project and to check the link hit localhost:port
+Now we need to clone the project and go to the project path and run the project
+Now to check the issue details we need to hit localhost:port
+
+N.B.: We are filtering the github api as the api give both issues and pull request
+

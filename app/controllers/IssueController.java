@@ -59,7 +59,6 @@ public class IssueController extends Controller {
     //getting the github api link
     String finalLink = IssueUtils.getApi(1, 100, path);
 
-    //System.out.println(finalLink);
     List<Issue> issueList = null;
 
     //calling the function which processes the api link and sends the issue details
@@ -132,9 +131,12 @@ public class IssueController extends Controller {
     int gt24lt7d = 0;
     int gt7d = 0;
     for(Issue s:sh) {
-      if(s.getPull_request() == null) {
+      /**
+       *filtering the pull request as the github api returns both the issue and pull request as issues
+       */
+      if(s.getPullRequest() == null) {
         totalIssue++;
-        String createdDate = s.getCreated_at();
+        String createdDate = s.getCreatedAt();
 
         DateTime now = DateTime.now();
 
@@ -174,7 +176,7 @@ public class IssueController extends Controller {
         }
       }
     }
-    //int[] issueDetails = new int[4];
+
     Map<String,Integer> issueDetails = new HashMap<>();
     issueDetails.put("totalIssue",totalIssue);
     issueDetails.put("lessThan24Hours",lt24h);
