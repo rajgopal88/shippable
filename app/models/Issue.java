@@ -4,19 +4,25 @@ import com.avaje.ebean.Model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
 /**
- * Created by raj on 30/9/16.
+ * Model file for getting the essential part from the json returned from the
  */
 @Entity
 public class Issue extends Model {
 
   @Id
   private int id;
+
   private String state;
+
   private String created_at;
-  private String updated_at;
-  private String closed_at;
+
+  @OneToOne
+  @JoinColumn(name = "pull_request")
+  private PullRequest pull_request;
 
   public String getState() { return state; }
 
@@ -26,19 +32,7 @@ public class Issue extends Model {
 
   public void setCreated_at(String created_at) { this.created_at = created_at;}
 
-  public String getUpdated_at() {
-    return updated_at;
-  }
+  public PullRequest getPull_request() { return pull_request; }
 
-  public void setUpdated_at(String updated_at) {
-    this.updated_at = updated_at;
-  }
-
-  public String getClosed_at() {
-    return closed_at;
-  }
-
-  public void setClosed_at(String closed_at) {
-    this.closed_at = closed_at;
-  }
+  public void setPull_request(PullRequest pull_request) { this.pull_request = pull_request; }
 }

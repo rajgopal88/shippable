@@ -50,6 +50,7 @@ public class IssueController extends Controller {
     String path = url.getPath();
 
     String finalLink = IssueUtils.getApi(1, 100, path);
+    System.out.println(finalLink);
     List<Issue> issueList = null;
 
     return getIssues(1, 100, path).thenApply(issues -> ok(Json.toJson(issueDetails(issues))));
@@ -100,54 +101,56 @@ public class IssueController extends Controller {
   }
 
   public Map<String,Integer> issueDetails(List<Issue> sh) {
-    int i = sh.size();
+    int totalIssue = 0;
     int lt24h = 0;
     int gt24lt7d = 0;
     int gt7d = 0;
     for(Issue s:sh) {
-      String createdDate = s.getCreated_at();
-      //String updatedDate = s.getUpdated_at();
+      if(s.getPull_request() == null) {
+        totalIssue++;
+        String createdDate = s.getCreated_at();
 
-      DateTime now = DateTime.now();
+        DateTime now = DateTime.now();
 
-      DateTime isoDate = new DateTime(createdDate, DateTimeZone.UTC);
-      DateTimeFormatter dateTimeFormatter = DateTimeFormat
-          .forPattern("MM/dd/yyyy HH:mm:ss")
-          .withZone(DateTimeZone.forID("Asia/Kolkata"));
-      String newCreatedDate = dateTimeFormatter.print(isoDate);
+        DateTime isoDate = new DateTime(createdDate, DateTimeZone.UTC);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat
+            .forPattern("MM/dd/yyyy HH:mm:ss")
+            .withZone(DateTimeZone.forID("Asia/Kolkata"));
+        String newCreatedDate = dateTimeFormatter.print(isoDate);
 
-      DateTime isoDate1 = new DateTime(now, DateTimeZone.UTC);
-      DateTimeFormatter dateTimeFormatter1 = DateTimeFormat
-          .forPattern("MM/dd/yyyy HH:mm:ss")
-          .withZone(DateTimeZone.forID("Asia/Kolkata"));
-      String newUpdatedDate = dateTimeFormatter1.print(isoDate1);
+        DateTime isoDate1 = new DateTime(now, DateTimeZone.UTC);
+        DateTimeFormatter dateTimeFormatter1 = DateTimeFormat
+            .forPattern("MM/dd/yyyy HH:mm:ss")
+            .withZone(DateTimeZone.forID("Asia/Kolkata"));
+        String newUpdatedDate = dateTimeFormatter1.print(isoDate1);
 
-      SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-      Date d1 = null;
-      Date d2 = null;
-      try {
-        d1 = format.parse(newCreatedDate);
-        d2 = format.parse(newUpdatedDate);
-        //in milliseconds
-        long diff = d2.getTime() - d1.getTime();
-        //long diffHours = diff / (60 * 60 * 1000) % 24;
-        long diffDays = diff / (24 * 60 * 60 * 1000);
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        Date d1 = null;
+        Date d2 = null;
+        try {
+          d1 = format.parse(newCreatedDate);
+          d2 = format.parse(newUpdatedDate);
+          //in milliseconds
+          long diff = d2.getTime() - d1.getTime();
+          //long diffHours = diff / (60 * 60 * 1000) % 24;
+          long diffDays = diff / (24 * 60 * 60 * 1000);
 
-        if(diffDays == 0) {
-          lt24h+=1;
-        } else if(diffDays > 0 && diffDays<7) {
-          gt24lt7d+=1;
-        } else if(diffDays>7) {
-          gt7d+=1;
+          if(diffDays == 0) {
+            lt24h+=1;
+          } else if(diffDays > 0 && diffDays<7) {
+            gt24lt7d+=1;
+          } else if(diffDays>7) {
+            gt7d+=1;
+          }
+
+        } catch (Exception e) {
+          e.printStackTrace();
         }
-
-      } catch (Exception e) {
-        e.printStackTrace();
       }
     }
     //int[] issueDetails = new int[4];
     Map<String,Integer> issueDetails = new HashMap<>();
-    issueDetails.put("totalIssue",i);
+    issueDetails.put("totalIssue",totalIssue);
     issueDetails.put("lessThan24Hours",lt24h);
     issueDetails.put("greaterThan24HoursLessThan7Days",gt24lt7d);
     issueDetails.put("greaterThan7Days",gt7d);
