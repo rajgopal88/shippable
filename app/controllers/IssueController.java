@@ -32,9 +32,12 @@ public class IssueController extends Controller {
   @Inject
   WSClient ws;
 
-  public Result issueUI() {
-    return ok(master.render());
-  }
+  /**
+   * function to render the UI
+   * @return
+   */
+  public Result issueUI() { return ok(master.render()); }
+
 
   public CompletionStage<Result> issueLink() throws MalformedURLException {
     Http.RequestBody body = request().body();
