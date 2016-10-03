@@ -1,0 +1,67 @@
+/*private Map<String,Integer> issueDetails(List<Issue> issues) {
+    int totalIssue = 0;
+    int lt24h = 0;
+    int gt24lt7d = 0;
+    int gt7d = 0;
+    if(issues != null) {
+      //total no. of open issues
+      totalIssue = issues.size();
+
+      //total no. of issues created in past 24 hours
+      lt24h = issues.stream().filter(this::isLt24hIssue).collect(Collectors.toList()).size();
+
+      //total no. of issues created >24 hours but less than 7 days
+      gt24lt7d = issues.stream().filter(this::isGt24Lt7dIssue).collect(Collectors.toList()).size();
+
+      //total no. of issues created greater than 7 days
+      gt24lt7d = issues.stream().filter(this::isGt7dIssue).collect(Collectors.toList()).size();
+    }
+
+    Map<String,Integer> issueDetails = new HashMap<>();
+    issueDetails.put("totalIssue",totalIssue);
+    issueDetails.put("lessThan24Hours",lt24h);
+    issueDetails.put("greaterThan24HoursLessThan7Days",gt24lt7d);
+    issueDetails.put("greaterThan7Days",gt7d);
+    return issueDetails;
+  }
+
+  *//**
+   * Check if the issue was created in less than 24 hours
+   * @param issue which need to be checked
+   * @return
+   *//*
+  private boolean isLt24hIssue(Issue issue) {
+    Date issueDate = issue.getCreatedAt();
+    Date now = new Date();
+    long timeDiff = now.getTime() - issueDate.getTime();
+    return TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS) < 0;
+  }
+
+  *//**
+   * Check if the issue was created in greater than 24 hours but less than 7 days
+   * @param issue which need to be checked
+   * @return
+   *//*
+  private boolean isGt24Lt7dIssue(Issue issue) {
+    Date issueDate = issue.getCreatedAt();
+    Date now = new Date();
+    long timeDiff = now.getTime() - issueDate.getTime();
+
+    if(TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS) > 0 && TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS) < 7) {
+      return true;
+    }
+    return false;
+  }
+
+  *//**
+   * Check if the issue was created in greater than 7 days
+   * @param issue which need to be checked
+   * @return
+   *//*
+  private boolean isGt7dIssue(Issue issue) {
+    Date issueDate = issue.getCreatedAt();
+    Date now = new Date();
+    long timeDiff = now.getTime() - issueDate.getTime();
+    System.out.println(TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS));
+    return TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS) > 7;
+  }*/

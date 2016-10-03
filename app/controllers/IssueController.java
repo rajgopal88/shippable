@@ -29,8 +29,6 @@ import java.util.concurrent.CompletionStage;
  */
 public class IssueController extends Controller {
 
-  String final_link = "https://api.github.com/repos/Shippable/support/issues?page=1&per_page=100&state=open";
-
   @Inject
   WSClient ws;
 
@@ -127,27 +125,22 @@ public class IssueController extends Controller {
       //filtering the pull request as the github api returns both the issue and pull request as issues
       if(issue.getPullRequest() == null) {
         totalIssue++;
-        String createdDate = issue.getCreatedAt();
 
+        Date isoDate = issue.getCreatedAt();
         DateTime now = DateTime.now();
-
-        DateTime isoDate = new DateTime(createdDate, DateTimeZone.UTC);
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat
-            .forPattern("MM/dd/yyyy HH:mm:ss")
-            .withZone(DateTimeZone.forID("Asia/Kolkata"));
-        String newCreatedDate = dateTimeFormatter.print(isoDate);
 
         DateTime isoDate1 = new DateTime(now, DateTimeZone.UTC);
         DateTimeFormatter dateTimeFormatter1 = DateTimeFormat
             .forPattern("MM/dd/yyyy HH:mm:ss")
             .withZone(DateTimeZone.forID("Asia/Kolkata"));
+        
         String newUpdatedDate = dateTimeFormatter1.print(isoDate1);
 
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         Date d1 = null;
         Date d2 = null;
         try {
-          d1 = format.parse(newCreatedDate);
+          d1 = isoDate;
           d2 = format.parse(newUpdatedDate);
 
           //in milliseconds

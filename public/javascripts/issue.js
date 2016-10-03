@@ -9,10 +9,12 @@ IssueApp.controller('IssueAppCtrl',function($scope, issueFactory) {
      */
     $scope.getData = function() {
         var data = {};
+        $scope.loading = true; //enabling loading
         data["link"] = $scope.link;
         issueFactory.getData(data).success(function(response) {
             console.log(response);
             $scope.issueData = response;
+            $scope.loading = false; //disabling loading
         });
     };
 

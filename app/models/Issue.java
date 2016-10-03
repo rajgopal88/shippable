@@ -1,9 +1,11 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.Date;
 
 /**
  * Model file for getting the essential part from the json returned from the
@@ -17,7 +19,8 @@ public class Issue {
   private String state;
 
   @JsonProperty("created_at")
-  private String createdAt;
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+  private Date createdAt;
 
   @JsonProperty("pull_request")
   private PullRequest pullRequest;
@@ -30,9 +33,9 @@ public class Issue {
 
   public void setState(String state) { this.state = state; }
 
-  public String getCreatedAt() { return createdAt; }
+  public Date getCreatedAt() { return createdAt; }
 
-  public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
+  public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
 
   public PullRequest getPullRequest() { return pullRequest; }
 
