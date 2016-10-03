@@ -1,20 +1,44 @@
-/*private Map<String,Integer> issueDetails(List<Issue> issues) {
+/*public Map<String,Integer> issueDetails(List<Issue> issues) {
     int totalIssue = 0;
     int lt24h = 0;
     int gt24lt7d = 0;
     int gt7d = 0;
-    if(issues != null) {
-      //total no. of open issues
-      totalIssue = issues.size();
+    for(Issue issue:issues) {
+      //filtering the pull request as the github api returns both the issue and pull request as issues
+      if(issue.getPullRequest() == null) {
+        totalIssue++;
+        Date isoDate = issue.getCreatedAt();
+        DateTime now = DateTime.now();
 
-      //total no. of issues created in past 24 hours
-      lt24h = issues.stream().filter(this::isLt24hIssue).collect(Collectors.toList()).size();
+        DateTime isoDate1 = new DateTime(now, DateTimeZone.UTC);
+        DateTimeFormatter dateTimeFormatter1 = DateTimeFormat
+            .forPattern("MM/dd/yyyy HH:mm:ss")
+            .withZone(DateTimeZone.forID("Asia/Kolkata"));
+        String newUpdatedDate = dateTimeFormatter1.print(isoDate1);
 
-      //total no. of issues created >24 hours but less than 7 days
-      gt24lt7d = issues.stream().filter(this::isGt24Lt7dIssue).collect(Collectors.toList()).size();
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        Date d1 = null;
+        Date d2 = null;
+        try {
+          d1 = isoDate;
+          d2 = format.parse(newUpdatedDate);
 
-      //total no. of issues created greater than 7 days
-      gt24lt7d = issues.stream().filter(this::isGt7dIssue).collect(Collectors.toList()).size();
+          //in milliseconds
+          long diff = d2.getTime() - d1.getTime();
+          long diffDays = diff / (24 * 60 * 60 * 1000);
+
+          if(diffDays == 0) {
+            lt24h+=1;
+          } else if(diffDays > 0 && diffDays<7) {
+            gt24lt7d+=1;
+          } else if(diffDays>7) {
+            gt7d+=1;
+          }
+
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
     }
 
     Map<String,Integer> issueDetails = new HashMap<>();
@@ -23,45 +47,4 @@
     issueDetails.put("greaterThan24HoursLessThan7Days",gt24lt7d);
     issueDetails.put("greaterThan7Days",gt7d);
     return issueDetails;
-  }
-
-  *//**
-   * Check if the issue was created in less than 24 hours
-   * @param issue which need to be checked
-   * @return
-   *//*
-  private boolean isLt24hIssue(Issue issue) {
-    Date issueDate = issue.getCreatedAt();
-    Date now = new Date();
-    long timeDiff = now.getTime() - issueDate.getTime();
-    return TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS) < 0;
-  }
-
-  *//**
-   * Check if the issue was created in greater than 24 hours but less than 7 days
-   * @param issue which need to be checked
-   * @return
-   *//*
-  private boolean isGt24Lt7dIssue(Issue issue) {
-    Date issueDate = issue.getCreatedAt();
-    Date now = new Date();
-    long timeDiff = now.getTime() - issueDate.getTime();
-
-    if(TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS) > 0 && TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS) < 7) {
-      return true;
-    }
-    return false;
-  }
-
-  *//**
-   * Check if the issue was created in greater than 7 days
-   * @param issue which need to be checked
-   * @return
-   *//*
-  private boolean isGt7dIssue(Issue issue) {
-    Date issueDate = issue.getCreatedAt();
-    Date now = new Date();
-    long timeDiff = now.getTime() - issueDate.getTime();
-    System.out.println(TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS));
-    return TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS) > 7;
   }*/

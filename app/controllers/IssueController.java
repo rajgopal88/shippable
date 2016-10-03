@@ -2,10 +2,6 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import models.Issue;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import play.libs.Json;
 import play.libs.ws.WSClient;
 import play.libs.ws.WSResponse;
@@ -19,9 +15,10 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 /**
@@ -116,49 +113,27 @@ public class IssueController extends Controller {
    * function which receives list of processed issue and processes this
    * data to get the issue details and returns a map containing all the details.
    */
-  public Map<String,Integer> issueDetails(List<Issue> issues) {
+  private Map<String,Integer> issueDetails(List<Issue> allIssues) {
     int totalIssue = 0;
     int lt24h = 0;
     int gt24lt7d = 0;
     int gt7d = 0;
-    for(Issue issue:issues) {
-      //filtering the pull request as the github api returns both the issue and pull request as issues
-      if(issue.getPullRequest() == null) {
-        totalIssue++;
 
-        Date isoDate = issue.getCreatedAt();
-        DateTime now = DateTime.now();
+    //filtering the issue and removing the pull requests
+    List<Issue> issues = allIssues.stream().filter(this::isIssue).collect(Collectors.toList());
 
-        DateTime isoDate1 = new DateTime(now, DateTimeZone.UTC);
-        DateTimeFormatter dateTimeFormatter1 = DateTimeFormat
-            .forPattern("MM/dd/yyyy HH:mm:ss")
-            .withZone(DateTimeZone.forID("Asia/Kolkata"));
-        
-        String newUpdatedDate = dateTimeFormatter1.print(isoDate1);
+    if(issues != null) {
+      //total no. of open issues
+      totalIssue = issues.size();
 
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-        Date d1 = null;
-        Date d2 = null;
-        try {
-          d1 = isoDate;
-          d2 = format.parse(newUpdatedDate);
+      //total no. of issues created in past 24 hours
+      lt24h = issues.stream().filter(this::isLt24hIssue).collect(Collectors.toList()).size();
 
-          //in milliseconds
-          long diff = d2.getTime() - d1.getTime();
-          long diffDays = diff / (24 * 60 * 60 * 1000);
+      //total no. of issues created >24 hours but less than 7 days
+      gt24lt7d = issues.stream().filter(this::isGt24Lt7dIssue).collect(Collectors.toList()).size();
 
-          if(diffDays == 0) {
-            lt24h+=1;
-          } else if(diffDays > 0 && diffDays<7) {
-            gt24lt7d+=1;
-          } else if(diffDays>7) {
-            gt7d+=1;
-          }
-
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
+      //total no. of issues created greater than 7 days
+      gt7d = issues.stream().filter(this::isGt7dIssue).collect(Collectors.toList()).size();
     }
 
     Map<String,Integer> issueDetails = new HashMap<>();
@@ -168,4 +143,54 @@ public class IssueController extends Controller {
     issueDetails.put("greaterThan7Days",gt7d);
     return issueDetails;
   }
+
+  /**
+   * Checking if the issue is only an issue or a pull request beccause the api return all the pull request as issues
+   * @param issue
+   * @return
+   */
+  private boolean isIssue(Issue issue) {
+     return (issue.getPullRequest() == null) ? true:false;
+  }
+
+  /**
+   * Check if the issue was created in less than 24 hours
+   * @param issue which need to be checked
+   * @return
+   */
+  private boolean isLt24hIssue(Issue issue) {
+    Date issueDate = issue.getCreatedAt();
+    Date now = new Date();
+    long timeDiff = now.getTime() - issueDate.getTime();
+
+    return TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS) < 1;
+  }
+
+  /**
+   * Check if the issue was created in greater than 24 hours but less than 7 days
+   * @param issue which need to be checked
+   * @return
+   */
+  private boolean isGt24Lt7dIssue(Issue issue) {
+    Date issueDate = issue.getCreatedAt();
+    Date now = new Date();
+    long timeDiff = now.getTime() - issueDate.getTime();
+
+    return (TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS) >= 1 &&
+        TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS) < 7) ? true:false;
+  }
+
+  /**
+   * Check if the issue was created in greater than 7 days
+   * @param issue which need to be checked
+   * @return
+   */
+  private boolean isGt7dIssue(Issue issue) {
+    Date issueDate = issue.getCreatedAt();
+    Date now = new Date();
+    long timeDiff = now.getTime() - issueDate.getTime();
+
+    return (TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS) >= 7) ? true:false;
+  }
+
 }
