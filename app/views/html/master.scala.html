@@ -2,9 +2,12 @@
 <html ng-app = "IssueApp">
 	<head>
 		<!-- Latest compiled and minified CSS -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 		<!-- Optional theme -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+    integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/javascripts/ladda-themeless.min.css">
 		<TITLE>Shippable Screening Test</TITLE>
 	</head>
 	<body>
@@ -12,10 +15,10 @@
 			<h1>Github Open Issue Details</h1>
 			<div class="col-sm-6">
       			<input type="text" class="form-control" placeholder="https://github.com/Shippable/support/issues" ng-model="link">
-    		</div><button class="btn btn-primary" ng-click=getData()>Click for issue details</button>
-        <div>
+    		</div><button type="button" ladda="loading" class="btn btn-primary btn-lg " ng-click = getData()
+          data-style="expand-right">Click for issue details</button>
+    		<div>
     			&nbsp;
-          <div ng-show="loading" class="loading"><img src="assets/images/loading.jpeg"></div>
     		</div>
     		<div class="col-sm-12">	
     			<table class="table table-bordered">
@@ -37,6 +40,9 @@
 			</div>
 		</div>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+    <script src="/assets/javascripts/spin.min.js"></script>
+    <script src="/assets/javascripts/ladda.min.js"></script>
+    <script src="/assets/javascripts/angular-ladda.min.js"></script>
     <script src="assets/javascripts/issue.js"></script>
 	</body>
 </html>
