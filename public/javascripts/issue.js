@@ -17,7 +17,6 @@ IssueApp.controller('IssueAppCtrl',function($scope, issueFactory) {
             $scope.loading = false; //disabling loading
         });
     };
-
     $scope.getData();
 });
 
